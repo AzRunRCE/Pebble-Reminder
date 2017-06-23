@@ -1,22 +1,17 @@
 #include <pebble.h>
 #include "main.h"
-
-
 const uint32_t inbox_size = 10;
 const uint32_t outbox_size = 512;
 static Window *window;
 static TextLayer *text_layer;
 static DictationSession *s_dictation_session;
 static char s_last_text[512];
-// My timeline token is SBmuAy3dtufOpFS1e89AJyhhZ7UFcADD
 
 enum {
   ACTION,
   DATA,
   QUIT
 };
-
-
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
   // A message was received, but had to be dropped
@@ -25,23 +20,16 @@ static void inbox_dropped_callback(AppMessageResult reason, void *context) {
 static void deinit(void) {
   dictation_session_destroy(s_dictation_session);
   window_destroy(window);
-  
 }
+
 static void inbox_received_callback(DictionaryIterator *iter, void *context) {
  Tuple *action_tuple = dict_find(iter, ACTION);
   if(action_tuple) {
-    // This value was stored as JS Number, which is stored here as int32_t
     int32_t action = action_tuple->value->int32;
     if (action == 0){
        window_stack_pop_all(true);
     }
-  
-}
-}
-
-
-static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
- 
+  }
 }
 
  static void pushReminder(char *transcription){
@@ -81,19 +69,7 @@ static void dictation_session_callback(DictationSession *session, DictationSessi
     text_layer_set_text(text_layer, s_failed_buff);
   }
 }
-static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 
-}
-
-static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-
-
-}
-static void click_config_provider(void *context) {
- // window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
- // window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
- // window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
-}
 
 static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
@@ -110,7 +86,6 @@ static void window_unload(Window *window) {
 
 static void init(void) {
   window = window_create();
-  window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
@@ -123,8 +98,6 @@ static void init(void) {
   s_dictation_session = dictation_session_create(sizeof(s_last_text), dictation_session_callback, NULL);
   dictation_session_start(s_dictation_session);
 }
-
-
 
 int main(void) {
   init();
