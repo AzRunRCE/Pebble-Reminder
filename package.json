@@ -1,0 +1,29 @@
+{
+    "author": "jeff.hardie@hotmail.fr",
+    "dependencies": {},
+    "keywords": [],
+    "name": "reminder",
+    "pebble": {
+        "displayName": "Reminder",
+        "enableMultiJS": true,
+        "messageKeys": {
+            "ACTION": 0,
+            "DATA": 1
+        },
+        "projectType": "native",
+        "resources": {
+            "media": []
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk"
+        ],
+        "uuid": "374b97e1-badf-43e9-8d90-e378df97d16e",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.0.0"
+}
