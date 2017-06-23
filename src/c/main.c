@@ -27,7 +27,7 @@ static void inbox_received_callback(DictionaryIterator *iter, void *context) {
   if(action_tuple) {
     int32_t action = action_tuple->value->int32;
     if (action == 0){
-       window_stack_pop_all(true);
+       window_stack_remove(window,true);
     }
   }
 }

@@ -26,7 +26,9 @@ function timelineRequest(pin, type, topics, apiKey, callback) {
     xhr.setRequestHeader('X-Pin-Topics', '' + topics.join(','));
     xhr.setRequestHeader('X-API-Key', '' + apiKey);
   }
-    xhr.setRequestHeader('X-User-Token',   'SBmuAy3dtufOpFS1e89AJyhhZ7UFcADD');
+    xhr.setRequestHeader('X-User-Token',   Pebble.getTimeLineToken());
+    Pebble.getTimelineToken(function (token){
+      xhr.setRequestHeader('X-User-Token',  token);}, null)
     xhr.send(JSON.stringify(pin));
 }
 
