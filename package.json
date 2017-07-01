@@ -8,7 +8,8 @@
         "enableMultiJS": true,
         "messageKeys": {
             "ACTION": 0,
-            "DATA": 1
+            "DATA": 1,
+            "DATE": 2
         },
         "projectType": "native",
         "resources": {
@@ -25,5 +26,5 @@
             "watchface": false
         }
     },
-    "version": "1.0.0"
+    "version": "1.1.0"
 }

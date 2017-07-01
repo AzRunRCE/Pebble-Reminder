@@ -1,25 +1,7 @@
 var timeline = require('./timeline');
-var keys = require('message_keys');
 Pebble.addEventListener('ready', function() {
   console.log('PebbleKit JS ready!');
 });
-
-Date.prototype.toIsoString = function() {
-    var tzo = -this.getTimezoneOffset(),
-        dif = tzo >= 0 ? '+' : '-',
-        pad = function(num) {
-            var norm = Math.abs(Math.floor(num));
-            return (norm < 10 ? '0' : '') + norm;
-        };
-    return this.getFullYear() +
-        '-' + pad(this.getMonth() + 1) +
-        '-' + pad(this.getDate()) +
-        'T' + pad(this.getHours()) +
-        ':' + pad(this.getMinutes()) +
-        ':' + pad(this.getSeconds()) +
-        dif + pad(tzo / 60) +
-        ':' + pad(tzo % 60);
-}
 
 Date.prototype.addHours= function(h){
     this.setHours(this.getHours()+h);
@@ -36,11 +18,11 @@ function genID()
     return text;
 }
 
-function addReminder(text)
+function addReminder(text,date)
 {
     var pin = {
         "id": "pin-" + genID(),
-        "time": new Date().addHours(1).toISOString(),
+        "time": new Date(date).toISOString(),
         "layout": {
           "type": "genericPin",
           "title": "Rappel " + text.substring(0,10),
@@ -68,7 +50,7 @@ Pebble.addEventListener('appmessage', function(e) {
   console.log('Got message: ' + JSON.stringify(dict));
   
   if(dict['ACTION'] == 0){
-     addReminder(dict['DATA']);
+     addReminder(dict['DATA'],dict["DATE"]);
   }
 });
 

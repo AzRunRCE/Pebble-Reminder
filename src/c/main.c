@@ -1,15 +1,17 @@
 #include <pebble.h>
 #include "main.h"
-const uint32_t inbox_size = 10;
+#include "pin_window.h"
+const uint32_t inbox_size = 64;
 const uint32_t outbox_size = 512;
 static Window *window;
 static TextLayer *text_layer;
 static DictationSession *s_dictation_session;
 static char s_last_text[512];
-
+static char *reminder_text;
 enum {
   ACTION,
   DATA,
+  DATE,
   QUIT
 };
 
@@ -32,7 +34,7 @@ static void inbox_received_callback(DictionaryIterator *iter, void *context) {
   }
 }
 
- static void pushReminder(char *transcription){
+ static void pushReminder(char *transcription,char *date){
     DictionaryIterator *out_iter;
 
   // Prepare the outbox buffer for this message
@@ -41,6 +43,7 @@ static void inbox_received_callback(DictionaryIterator *iter, void *context) {
     // Add an item to ask for weather data
       dict_write_int8(out_iter, ACTION, 0);
      dict_write_cstring(out_iter, DATA, transcription);
+     dict_write_cstring(out_iter, DATE, date);
     // Send this message
     result = app_message_outbox_send();
     if(result != APP_MSG_OK) {
@@ -55,13 +58,22 @@ static void inbox_received_callback(DictionaryIterator *iter, void *context) {
     APP_LOG(APP_LOG_LEVEL_ERROR, "Error preparing the outbox: %d", (int)result);
   }
  }
+static void pin_complete_callback(PIN pin, void *context) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "The reminder date was %s with this content: %s", pin.date,reminder_text);
+  pushReminder(reminder_text,pin.date);
+  pin_window_pop((PinWindow*)context, true);
+
+}
 static void dictation_session_callback(DictationSession *session, DictationSessionStatus status, 
                                        char *transcription, void *context) {
   if(status == DictationSessionStatusSuccess) {
-    // Display the dictated text
-    pushReminder(transcription);
-   
-   // text_layer_set_text(text_layer, s_last_text);
+    reminder_text = malloc(strlen(transcription));
+    strcpy(reminder_text,transcription);
+    PinWindow *pin_window = pin_window_create((PinWindowCallbacks) {
+          .pin_complete = pin_complete_callback
+        });
+        pin_window_push(pin_window, true);
+    
   } else {
     // Display the reason for any error
     static char s_failed_buff[128];
@@ -96,7 +108,11 @@ static void init(void) {
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);
   s_dictation_session = dictation_session_create(sizeof(s_last_text), dictation_session_callback, NULL);
-  dictation_session_start(s_dictation_session);
+ // dictation_session_start(s_dictation_session); 
+  PinWindow *pin_window = pin_window_create((PinWindowCallbacks) {
+          .pin_complete = pin_complete_callback
+        });
+        pin_window_push(pin_window, true);
 }
 
 int main(void) {

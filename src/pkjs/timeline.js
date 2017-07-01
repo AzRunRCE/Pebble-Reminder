@@ -22,14 +22,17 @@ function timelineRequest(pin, type, topics, apiKey, callback) {
   xhr.open(type, url);
   // Set headers
   xhr.setRequestHeader('Content-Type', 'application/json');
-  if(topics != null) {
+  if(topics !== null) {
     xhr.setRequestHeader('X-Pin-Topics', '' + topics.join(','));
     xhr.setRequestHeader('X-API-Key', '' + apiKey);
   }
-    xhr.setRequestHeader('X-User-Token',   Pebble.getTimeLineToken());
-    Pebble.getTimelineToken(function (token){
-      xhr.setRequestHeader('X-User-Token',  token);}, null)
+    Pebble.getTimelineToken(function(token) {
+    // Add headers
+    xhr.setRequestHeader('X-User-Token', '' + token);
+    // Send
     xhr.send(JSON.stringify(pin));
+    console.log('timeline: request sent.');
+  }, function(error) { console.log('timeline: error getting timeline token: ' + error); });
 }
 
 /**
