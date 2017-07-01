@@ -108,11 +108,8 @@ static void init(void) {
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);
   s_dictation_session = dictation_session_create(sizeof(s_last_text), dictation_session_callback, NULL);
- // dictation_session_start(s_dictation_session); 
-  PinWindow *pin_window = pin_window_create((PinWindowCallbacks) {
-          .pin_complete = pin_complete_callback
-        });
-        pin_window_push(pin_window, true);
+  dictation_session_start(s_dictation_session); 
+ 
 }
 
 int main(void) {
